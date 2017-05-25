@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-from os import urandom
 import unittest
 
 import mock
 import pytest
 
-from fots import abc_urandom
+from fots import abc_urandom, my_random
 
 
 def simple_urandom(length):
@@ -83,8 +82,47 @@ class TestRandomPartFive(unittest.TestCase):
     take place within a test case,
     you may use a with statement instead of a decorator as shown below.
     """
+    @pytest.mark.skip(reason="skip it for a moment")
     def test_mocking_without_decoration(self):
         # 인코딩에러 발생함 . . .
-        # encofing error occcured 
+        # encofing error occcured
         with mock.patch('os.urandom', return_value='pumpkins') as abc_urandom_function:
             assert abc_urandom(5) == 'abcpumpkins'
+
+
+class TestRandomPartSix(unittest.TestCase):
+    @pytest.mark.skip(reason="skip it for a moment")
+    @mock.patch('fots.urandom')
+    def test_abc_urandom(self, urandom_function):
+        urandom_function.return_value == 'awesome'
+        assert my_random(5) == 'awesome'
+        # 아래와 같은 식으로 리턴값을 조작 할 수있습니다.
+        urandom_function.return_value == 'baddass daniel'
+        assert my_random(5) == 'baddass daniel'
+        urandom_function.side_effect = (
+                lambda l: 'f' * l
+        )
+        assert my_random(5) == 'fffff'
+
+
+class TestRandomPartSeven(unittest.TestCase):
+    """
+    사실 가장 필요한 방법은 이 방법 인 것 같습니다.
+    그냥 리턴값 따로 명시를 해놓고...
+    """
+    @mock.patch('os.urandom', return_value='pumpkins')
+    def test_abc_urandom(self, urandom_function):
+        # The mock function hasn't been called yet
+        assert not urandom_function.called
+        # Here we call the mock function twice and assert that it has been
+        # called and the number of times called is 2
+        assert os.urandom(5) == 'pumpkins'
+        assert os.urandom(5) == 'pumpkins'
+        assert urandom_function.called
+        assert urandom_function.call_count == 2
+
+        # Finally, we can reset all function call statistics as though the
+        # mock function had never been used
+        urandom_function.reset_mock()
+        assert not urandom_function.called
+        assert urandom_function.call_count == 0
