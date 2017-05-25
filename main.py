@@ -126,3 +126,37 @@ class TestRandomPartSeven(unittest.TestCase):
         urandom_function.reset_mock()
         assert not urandom_function.called
         assert urandom_function.call_count == 0
+
+
+class TestRandomPartEight(unittest.TestCase):
+
+    @mock.patch('os.urandom', return_value='pumpkins')
+    def test_abc_urandom(self, urandom_function):
+        assert os.urandom(1) == 'pumpkins'
+        assert os.urandom(2) == 'pumpkins'
+        # 네 그렇습니다
+        # 아무리 함수애 넘겨주는 인자 값을 바꾸더라도
+        # 영향을 받지 않습니다
+        # 우리는 극단적인걸 좋아하니깐 한번 이렇게 해볼수도 있죠.
+        assert os.urandom(1000) == 'pumpkins'
+
+        # Function was last called with argument 100
+        # 가장 마지막에 넣언던 값이 call_args 에서
+        # 나오게됩니다.
+        args, kwargs = urandom_function.call_args
+        assert args == (1000,)
+        assert kwargs == {}
+
+        # All function calls were called with the following arguments
+
+        args, kwargs = urandom_function.call_args_list[0]
+        assert args == (1,)
+        assert kwargs == {}
+
+        args, kwargs = urandom_function.call_args_list[1]
+        assert args == (2,)
+        assert kwargs == {}
+
+        args, kwargs = urandom_function.call_args_list[2]
+        assert args == (1000,)
+        assert kwargs == {}
