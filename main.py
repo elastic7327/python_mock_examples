@@ -3,8 +3,9 @@
 
 import os
 from os import urandom
-import mock
 import unittest
+
+import mock
 import pytest
 
 from fots import abc_urandom
@@ -46,33 +47,44 @@ class TestRandomPartTwo(unittest.TestCase):
         assert os.urandom(5) == 'fffff'
 
 
-"""
-At this point, we know how to mock the various
-types of function calls that may occur.
-If you would like to perform a much simpler mock and just replace the return
-value of the function with a simple expression, you may do this:
-"""
-
-
 # 이런식으로도 가능합니다.
 class TestRandomPartThree(unittest.TestCase):
+    """
+    At this point, we know how to mock the various
+    types of function calls that may occur.
+    If you would like to perform a much simpler mock and
+    just replace the return
+    value of the function with a simple expression, you may do this:
+    """
+    # 이런식으로도 가능합니다.
     @mock.patch('fots.urandom', side_effect=simple_urandom)
     def test_abc_urandom(self, abc_urandom_function):
         assert abc_urandom(5) == 'abcfffff'
 
 
-"""
-If you would like to perform a much simpler mock and just replace
-the return value of the function with a simple expression, you may do this:
-"""
-
-
 class TestRandomPartFour(unittest.TestCase):
+    """
+    If you would like to perform a much simpler mock and just replace
+    the return value of the function with a simple expression, you may do this:
+    """
     # 그러니까 urandom 이라는 모듈은 무조건  HelloWOrldHolaHola를
     # 리턴한다. fots urandom 이란애는 그 값을 리턴한다.
-    # 파라미터 오타 정말 조심해야한다. 예를 들어서
+    # 파라미터 오타 정말 조심해야한다.b 예를 들어서
     # return_value ( o )  / return_values ( x )
-    @mock.patch('fots.urandom', return_value='HelloWorldHolaHola')
+    @mock.patch('fots.urandom', return_value='HelloWorldHola')
     def test_abc_urandom(self, abc_urandom_function):
         # abc_urandom 쪽에서는 abcHelloWorld 가 나옵니다.
-        assert abc_urandom(5) == 'HelloWorld'
+        assert abc_urandom(5) == 'abcHelloWorldHola'
+
+
+class TestRandomPartFive(unittest.TestCase):
+    """
+    For more granular control over when mocking should
+    take place within a test case,
+    you may use a with statement instead of a decorator as shown below.
+    """
+    def test_mocking_without_decoration(self):
+        # 인코딩에러 발생함 . . .
+        # encofing error occcured 
+        with mock.patch('os.urandom', return_value='pumpkins') as abc_urandom_function:
+            assert abc_urandom(5) == 'abcpumpkins'

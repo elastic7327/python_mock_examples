@@ -1,3 +1,3 @@
 {
-  "main.py::TestRandomPartFour::test_abc_urandom": true
+  "main.py::TestRandomPartFive::test_mocking_without_decoration": true
 }
