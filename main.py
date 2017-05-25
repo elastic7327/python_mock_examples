@@ -148,15 +148,17 @@ class TestRandomPartEight(unittest.TestCase):
         assert kwargs == {}
 
         # All function calls were called with the following arguments
-
+        # 첫번째에 함수 인자를 전달헀던 값 기억하시죠?
         args, kwargs = urandom_function.call_args_list[0]
         assert args == (1,)
         assert kwargs == {}
 
+        # 다음으로 두번째
         args, kwargs = urandom_function.call_args_list[1]
         assert args == (2,)
         assert kwargs == {}
 
+        # 또 그 다음으로 세번째
         args, kwargs = urandom_function.call_args_list[2]
         assert args == (1000,)
         assert kwargs == {}
